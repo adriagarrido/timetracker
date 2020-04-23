@@ -2,19 +2,19 @@
 version: "3"
 services:
   webapp:
-    image: adriagarrido/timetracker
-    build:
-      context: .
+    image: adriagarrido/timetracker:latest
+    # build:
+    #   context: .
     ports:
       - "8080:80"
     links: 
       - database
-    volumes:
-      - ./src:/var/www/html
-    environment:
-      - APP_KEY=SomeRandomStringToAddSecurity123
-      - APP_ENV=development
-      - APP_DEBUG=true
+    # volumes:
+    #   - ./src:/var/www/html
+    # environment:
+    #   - APP_KEY=SomeRandomStringToAddSecurity123
+    #   - APP_ENV=development
+    #   - APP_DEBUG=true
       # - APACHE_RUN_USER=apache-www-volume
       # - APACHE_RUN_GROUP=apache-www-volume
   database:
@@ -29,5 +29,5 @@ services:
     # volumes:
     #     - ./dump:/docker-entrypoint-initdb.d
     #     - persistent:/var/lib/mysql
-    networks:
-        - default
+    # networks:
+    #     - default
