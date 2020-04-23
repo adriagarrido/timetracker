@@ -1,0 +1,33 @@
+# docker-compose.yml
+version: "3"
+services:
+  webapp:
+    image: adriagarrido/timetracker
+    build:
+      context: .
+    ports:
+      - "8080:80"
+    links: 
+      - database
+    volumes:
+      - ./src:/var/www/html
+    environment:
+      - APP_KEY=SomeRandomStringToAddSecurity123
+      - APP_ENV=development
+      - APP_DEBUG=true
+      # - APACHE_RUN_USER=apache-www-volume
+      # - APACHE_RUN_GROUP=apache-www-volume
+  database:
+    image: mysql:5.7.13
+    ports: 
+        - "3306:3306"
+    environment:
+        MYSQL_DATABASE: myDb
+        MYSQL_USER: user
+        MYSQL_PASSWORD: test
+        MYSQL_ROOT_PASSWORD: test
+    # volumes:
+    #     - ./dump:/docker-entrypoint-initdb.d
+    #     - persistent:/var/lib/mysql
+    networks:
+        - default
