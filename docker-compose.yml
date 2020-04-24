@@ -1,22 +1,28 @@
 # docker-compose.yml
 version: "3"
 services:
-  webapp:
-    image: adriagarrido/timetracker:latest
-    # build:
-    #   context: .
+  # webapp: # This is for production.
+  #   image: adriagarrido/timetracker:latest
+  #   ports:
+  #     - "8080:80"
+  #   links: 
+  #     - database
+  webapp: # This is for development.
+    build:
+      context: .
+      dockerfile: .
     ports:
       - "8080:80"
     links: 
       - database
-    # volumes:
-    #   - ./src:/var/www/html
+    volumes:
+      - ./src:/var/www/html
     # environment:
     #   - APP_KEY=SomeRandomStringToAddSecurity123
     #   - APP_ENV=development
     #   - APP_DEBUG=true
-      # - APACHE_RUN_USER=apache-www-volume
-      # - APACHE_RUN_GROUP=apache-www-volume
+    # - APACHE_RUN_USER=apache-www-volume
+    # - APACHE_RUN_GROUP=apache-www-volume
   database:
     image: mysql:5.7.13
     ports: 
