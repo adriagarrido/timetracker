@@ -10,19 +10,16 @@ services:
   webapp: # This is for development.
     build:
       context: .
-      dockerfile: .
+      dockerfile: ./Dockerfile.development
     ports:
       - "8080:80"
     links: 
       - database
     volumes:
-      - ./src:/var/www/html
-    # environment:
-    #   - APP_KEY=SomeRandomStringToAddSecurity123
-    #   - APP_ENV=development
-    #   - APP_DEBUG=true
-    # - APACHE_RUN_USER=apache-www-volume
-    # - APACHE_RUN_GROUP=apache-www-volume
+      - .:/var/www
+    environment:
+      - APACHE_RUN_USER=apache-www-volume
+      - APACHE_RUN_GROUP=apache-www-volume
   database:
     image: mysql:5.7.13
     ports: 
