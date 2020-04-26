@@ -1,16 +1,12 @@
 # docker-compose.yml
 version: "3"
 services:
-  # webapp: # This is for production.
-  #   image: adriagarrido/timetracker:latest
-  #   ports:
-  #     - "8080:80"
-  #   links: 
-  #     - database
-  webapp: # This is for development.
-    build:
-      context: .
-      dockerfile: ./Dockerfile.development
+  # webapp: # This is for development.
+  #   build:
+  #     context: .
+  #     dockerfile: ./Dockerfile.development
+  webapp: # This is for production.
+    image: adriagarrido/timetracker:latest
     ports:
       - "8080:80"
     links: 
@@ -18,8 +14,13 @@ services:
     volumes:
       - .:/var/www
     environment:
-      - APACHE_RUN_USER=apache-www-volume
-      - APACHE_RUN_GROUP=apache-www-volume
+      APACHE_RUN_USER: apache-www-volume
+      APACHE_RUN_GROUP: apache-www-volume
+      MYSQL_HOSTNAME: database
+      MYSQL_DATABASE: myDb
+      MYSQL_USERNAME: user
+      MYSQL_PASSWORD: test
+      MYSQL_ROOT_PASSWORD: test
   database:
     image: mysql:5.7.13
     ports: 
@@ -29,8 +30,8 @@ services:
         MYSQL_USER: user
         MYSQL_PASSWORD: test
         MYSQL_ROOT_PASSWORD: test
-    # volumes:
-    #     - ./dump:/docker-entrypoint-initdb.d
-    #     - persistent:/var/lib/mysql
-    # networks:
-    #     - default
+    volumes:
+        - ./mysql:/var/lib/mysql
+        - persistent:/var/lib/mysql
+    networks:
+        - default

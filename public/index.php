@@ -1,6 +1,10 @@
 <?php
 
-define('ENVIRONMENT', 'development'); 
+define('ENVIRONMENT', 'development');
+define('MYSQL_HOSTNAME', $_ENV['MYSQL_HOSTNAME']);
+define('MYSQL_USERNAME', $_ENV['MYSQL_USERNAME']);
+define('MYSQL_PASSWORD', $_ENV['MYSQL_PASSWORD']);
+define('MYSQL_DATABASE', $_ENV['MYSQL_DATABASE']);
 
 // Valid PHP Version?
 $minPHPVersion = '7.2';
