@@ -34,6 +34,6 @@ class TaskStop extends BaseCommand
             CLI::write(CLI::color($e->getMessage(), 'red'));
         }
         $id = $model->db->insertId();
-        CLI::write('Task stopped. ID: '.CLI::color($id, green));
+        CLI::write('Task stopped. ID: '.CLI::color($id, 'green'));
     }
 }

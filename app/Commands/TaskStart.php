@@ -34,6 +34,6 @@ class TaskStart extends BaseCommand
             CLI::write(CLI::color($e->getMessage(), 'red'));
         }
         $id = $model->db->insertId();
-        CLI::write('Task running. ID: '.CLI::color($id, green));
+        CLI::write('Task running. ID: '.CLI::color($id, 'green'));
     }
 }
