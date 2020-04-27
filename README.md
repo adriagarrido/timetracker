@@ -4,6 +4,20 @@ This is a simple time tracker app.
 
 It's build with [CodeIgniter](http://codeigniter.com), and requires docker-compose to work.
 
+## tl;dr;
+
+```
+$ mkdir timetracker && cd timetracker
+$ wget https://raw.githubusercontent.com/adriagarrido/timetracker/master/docker-compose.yml
+$ docker-compose up -d
+```
+[http://localhost:8080](http://localhost:8080)
+
+```
+$ docker-compose exec webapp php spark task:start "name of the task"
+$ docker-compose exec webapp php spark task:stop
+```
+
 ## Install and Use
 
 Make a directory, download the [docker-compose.yml]() in it. Run `docker-compose up -d` and access to the localhost at the 8080 port.
