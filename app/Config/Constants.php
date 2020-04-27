@@ -75,3 +75,8 @@ defined('EXIT_USER_INPUT')     || define('EXIT_USER_INPUT', 7); // invalid user 
 defined('EXIT_DATABASE')       || define('EXIT_DATABASE', 8); // database error
 defined('EXIT__AUTO_MIN')      || define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 defined('EXIT__AUTO_MAX')      || define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+
+defined('MYSQL_HOSTNAME') || define('MYSQL_HOSTNAME', $_ENV['MYSQL_HOSTNAME']);
+defined('MYSQL_USERNAME') || define('MYSQL_USERNAME', $_ENV['MYSQL_USERNAME']);
+defined('MYSQL_PASSWORD') || define('MYSQL_PASSWORD', $_ENV['MYSQL_PASSWORD']);
+defined('MYSQL_DATABASE') || define('MYSQL_DATABASE', $_ENV['MYSQL_DATABASE']);
