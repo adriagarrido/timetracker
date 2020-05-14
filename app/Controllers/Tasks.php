@@ -2,106 +2,88 @@
 
 namespace App\Controllers;
 
-use App\Models\TasksModel;
+use App\Models\TaskModel;
+use App\Service\MigrateLatestUseCase;
+use App\Service\PrintTasksHtmlUseCase;
+use App\Service\StartTaskUseCase;
+use App\Service\StopTaskUseCase;
 use CodeIgniter\Controller;
+use Exception;
 
+/**
+ * Class Tasks
+ */
 class Tasks extends Controller
 {
+    /**
+     * @return void
+     */
     public function index()
     {
-        $migrate = \Config\Services::migrations();
-
-        try
-        {
-            $migrate->latest();
-        }
-        catch (\Exception $e)
-        {
+        try {
+            // Esto esta mal, pero para no forzar a migrar la base de datos
+            // al momento, lo hago al cargar la pagina.
+            $migration_runner = \Config\Services::migrations();
+            $migrateLatest    = new MigrateLatestUseCase($migration_runner);
+            $migrateLatest();
+        } catch (Exception $e) {
             $data['error'] = $e->getMessage();
         }
 
-        $model = new TasksModel();
+        // Ahora si, pintamos la pagina y las tareas.
+        echo view('templates/header', (isset($data)) ? $data : []);
 
-        $data['tasks']      = $model->getTasks();
-        $data['total_time'] = $model->getTotalTime();
+        $task_model  = new TaskModel();
+        $print_tasks = new PrintTasksHtmlUseCase($task_model);
+        echo $print_tasks();
 
-        echo view('templates/header', $data);
-        echo view('pages/body');
         echo view('templates/footer');
     }
 
+    /**
+     * @return void
+     */
     public function save()
     {
         if (defined('BASEPATH') && !$this->input->is_ajax_request()) {
-            exit('No direct script access allowed'); 
+            exit('No direct script access allowed');
         }
 
-        $model = new TasksModel();
+        if (
+            null === $this->request->getVar()
+            || empty($this->request->getVar('task'))
+        ) {
+            echo 'Parametros incorrectos';
+            return false;
+        }
 
         try {
-            $data = [
-                'task' => $this->request->getVar('task'),
-                'slug'  => strtolower(url_title($this->request->getVar('task'))),
-            ];
-            if (null !== $this->request->getVar('id')) {
-                $data['id'] = $this->request->getVar('id');
-                $data['stop_date'] = $this->request->getVar('date');
+            $task_model = new TaskModel();
+            if (is_null($this->request->getVar('id'))) {
+                $start_task = new StartTaskUseCase($task_model);
+                $task_name  = $this->request->getVar('task');
+                echo $start_task($task_name);
             } else {
-                if ($model->getRunningTask()) {
-                    throw new Exception("Running task already set.", 1);
-                }
-                $data['start_date'] = $this->request->getVar('date');
+                $stop_task = new StopTaskUseCase($task_model);
+                $task_id   = $this->request->getVar('id');
+                $stop_task($task_id);
             }
-            $model->save($data);
-        } catch (\Exceptions $e) {
+        } catch (Exception $e) {
             echo $e->getMessage();
         }
-        $id = $model->db->insertId();
-        echo $id;
     }
 
+    /**
+     * @return void
+     */
     public function getTasks()
     {
         if (defined('BASEPATH') && !$this->input->is_ajax_request()) {
-            exit('No direct script access allowed'); 
+            exit('No direct script access allowed');
         }
 
-        $model = new TasksModel();
-
-        $tasks = $model->getTasks();
-
-        try {
-            $html_tasks = '';
-            foreach ($tasks as $task) {
-                $total    = ($task['interval']) / 60 / 60;
-                $time = ($total == 0)? '<': '' . ' ' . number_format($total, 2);
-                if ($time == 0) {
-                    $time = '< '.$time;
-                }
-                $html_tasks .= '<li class="list-group-item d-flex justify-content-between align-items-center">'
-                . $task['task']
-                . '<span class="badge badge-primary badge-pill">'. $time .'h</span>'
-                . '</li>';
-            }
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-        }
-
-        echo $html_tasks;
-    }
-
-    public function getTime()
-    {
-        if (defined('BASEPATH') && !$this->input->is_ajax_request()) {
-            exit('No direct script access allowed'); 
-        }
-
-        try {
-            $model = new TasksModel();
-        
-            echo $model->getTotalTime();
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-        }
+        $task_model  = new TaskModel();
+        $print_tasks = new PrintTasksHtmlUseCase($task_model);
+        echo $print_tasks();
     }
 }

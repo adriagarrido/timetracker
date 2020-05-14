@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
     var running = false;
 
@@ -22,15 +21,14 @@ $(document).ready(function () {
             final = new Date();
             clearInterval(control);
             running = false;
-            saveToDb($('#input-task').val(), final.toISOString(), $('#hidden-id').val());
+            saveToDb($('#input-task').val(), $('#hidden-id').val());
             $('#input-task').val('');
             $('#screen').html('0:00:00');
-            // getTasks();
         } else {
             inicial = new Date();
             control = setInterval(cronometro,10);
             running = true;
-            result  = saveToDb($('#input-task').val(), inicial.toISOString());
+            result  = saveToDb($('#input-task').val());
         }
         $('#input-task').prop('disabled', running);
     }
@@ -57,12 +55,12 @@ $(document).ready(function () {
         $('#input-task').prop('disabled', running);
     }
 
-    function saveToDb($task, $date, $id) {
+    function saveToDb($task, $id) {
         $url = BASE_URL + '/tasks/save';
         $.ajax({
             method: "POST",
             url: $url,
-            data: { task: $task, date: $date, id: $id }
+            data: { task: $task, id: $id }
         })
         .fail(function( textStatus ) {
             console.log( "Request failed: " + textStatus );
@@ -85,21 +83,7 @@ $(document).ready(function () {
             console.log( "Request failed: " + textStatus );
         })
         .done(function( msg ) {
-            $('#task-list').html(msg)
-        });
-
-        $.ajax({
-            method: "POST",
-            url: BASE_URL + '/tasks/gettime',
-        })
-        .fail(function( textStatus ) {
-            console.log( "Request failed: " + textStatus );
-        })
-        .done(function( msg ) {
-            $number = $.number(msg, 2, '.');
-            $('#totaltime').html($number+'h');
+            $('#tasks-list').html(msg)
         });
     }
 });
-     
-     
