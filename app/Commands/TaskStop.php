@@ -2,9 +2,11 @@
 
 namespace App\Commands;
 
-use App\Models\TasksModel;
+use App\Models\TaskModel;
+use App\Service\StopTaskUseCase;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
+use Exception;
 
 class TaskStop extends BaseCommand
 {
@@ -15,25 +17,16 @@ class TaskStop extends BaseCommand
 
     public function run(array $params)
     {
-        $model = new TasksModel();
-
-        $id = $model->getRunningTask();
-
-        if (! $id) {
-            CLI::write('No running tasks.');
+        try {
+            $task_model = new TaskModel();
+            $stop_task  = new StopTaskUseCase($task_model);
+            $stop_task();
+        } catch (Exception $e) {
+            CLI::write(CLI::color($e->getMessage(), 'red'));
             return false;
         }
+        CLI::write('Task stopped.');
 
-        try {
-            $data = [
-                'id' => $id,
-                'stop_date' => date("Y-m-d H:i:s"),
-            ];
-            $model->save($data);
-        } catch (\Exceptions $e) {
-            CLI::write(CLI::color($e->getMessage(), 'red'));
-        }
-        $id = $model->db->insertId();
-        CLI::write('Task stopped. ID: '.CLI::color($id, 'green'));
+        return true;
     }
 }
